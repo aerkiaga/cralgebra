@@ -19,9 +19,3 @@ impl<const N: usize, C, T: ClosedAddDyn<C>> ClosedAddDyn<C> for Cyclotomic<N, T>
         }
     }
 }
-
-impl<C, const N: usize, T: ClosedAddCostDyn<C>> ClosedAddCostDyn<C> for Cyclotomic<N, T> {
-    fn add_cost_d(ctx: &C) -> f64 {
-        N as f64 * T::add_cost_d(ctx)
-    }
-}

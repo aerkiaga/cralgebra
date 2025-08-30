@@ -23,21 +23,9 @@ impl CyclicOrdDyn<()> for Z2_128 {
     }
 }
 
-impl CyclicOrdCostDyn<()> for Z2_128 {
-    fn cyclic_lt_cost_d(_ctx: &()) -> f64 {
-        2.0 * COSTS.scale * COSTS.cmp.r_128
-    }
-}
-
 impl CyclicOrdZeroDyn<()> for Z2_128 {
     fn cyclic_lt0_d(&self, high: &Self, _ctx: &()) -> bool {
         self.inner < high.inner
-    }
-}
-
-impl CyclicOrdZeroCostDyn<()> for Z2_128 {
-    fn cyclic_lt0_cost_d(_ctx: &()) -> f64 {
-        COSTS.scale * COSTS.cmp.r_128
     }
 }
 
@@ -49,12 +37,6 @@ impl ClosedAddDyn<()> for Z2_128 {
     }
 }
 
-impl ClosedAddCostDyn<()> for Z2_128 {
-    fn add_cost_d(_ctx: &()) -> f64 {
-        COSTS.scale * COSTS.add.r_128
-    }
-}
-
 impl ClosedSubDyn<()> for Z2_128 {
     fn sub_d(&self, rhs: &Self, _ctx: &()) -> Self {
         Self {
@@ -62,8 +44,6 @@ impl ClosedSubDyn<()> for Z2_128 {
         }
     }
 }
-
-impl ClosedSubCostDyn<()> for Z2_128 {}
 
 impl ZeroDyn<()> for Z2_128 {
     fn zero_d(_ctx: &()) -> Self {
@@ -79,12 +59,6 @@ impl ClosedMulDyn<()> for Z2_128 {
     }
 }
 
-impl ClosedMulCostDyn<()> for Z2_128 {
-    fn mul_cost_d(_ctx: &()) -> f64 {
-        COSTS.scale * COSTS.mul.r_128
-    }
-}
-
 impl CenteredMulDyn<()> for Z2_128 {
     fn centered_mul_d(&self, rhs: &Self, _ctx: &()) -> Self {
         self.widening_mul_d(rhs, &()).1
@@ -94,8 +68,6 @@ impl CenteredMulDyn<()> for Z2_128 {
         (Self { inner: low }, Self { inner: high })
     }
 }
-
-impl CenteredMulCostDyn<()> for Z2_128 {}
 
 impl OneDyn<()> for Z2_128 {
     fn one_d(_ctx: &()) -> Self {
@@ -128,10 +100,7 @@ fn inv_test() {
         a.inner |= 1;
         let r = a.inv_d(&());
         let one = a.mul_d(&r, &());
-        println!(
-            "{}⁻¹ = {}",
-            a.inner, r.inner
-        );
+        println!("{}⁻¹ = {}", a.inner, r.inner);
         assert!(one.is_one_d(&()));
     }
 }
@@ -147,12 +116,6 @@ impl EuclidDyn<()> for Z2_128 {
         Self {
             inner: self.inner.rem_euclid(rhs.inner),
         }
-    }
-}
-
-impl EuclidCostDyn<()> for Z2_128 {
-    fn euclid_cost_d(_ctx: &()) -> f64 {
-        COSTS.scale * COSTS.div.r_128
     }
 }
 

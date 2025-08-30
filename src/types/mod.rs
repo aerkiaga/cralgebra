@@ -10,6 +10,8 @@ mod z2_64;
 pub use z2_64::*;
 mod z2_128;
 pub use z2_128::*;
+mod z2_64n;
+pub use z2_64n::*;
 
 mod modular_dyn;
 pub use modular_dyn::*;

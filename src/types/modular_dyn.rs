@@ -65,7 +65,8 @@ impl<T> ModularDyn<T> {
     ///
     /// Will check against modulus in debug mode.
     pub fn new_d<C>(value: T, ctx: &(ModularContext<T, C>, &C)) -> Self
-    where T: CyclicOrdZeroDyn<C>
+    where
+        T: CyclicOrdZeroDyn<C>,
     {
         let m = &ctx.0.modulo;
         let c = ctx.1;
@@ -81,26 +82,10 @@ impl<C, T: CyclicOrdDyn<C>> CyclicOrdDyn<(ModularContext<T, C>, &C)> for Modular
     }
 }
 
-impl<C, T: CyclicOrdCostDyn<C>> CyclicOrdCostDyn<(ModularContext<T, C>, &C)> for ModularDyn<T> {
-    fn cyclic_lt_cost_d(ctx: &(ModularContext<T, C>, &C)) -> f64 {
-        let c = ctx.1;
-        T::cyclic_lt_cost_d(c)
-    }
-}
-
 impl<C, T: CyclicOrdZeroDyn<C>> CyclicOrdZeroDyn<(ModularContext<T, C>, &C)> for ModularDyn<T> {
     fn cyclic_lt0_d(&self, high: &Self, ctx: &(ModularContext<T, C>, &C)) -> bool {
         let c = ctx.1;
         self.inner.cyclic_lt0_d(&high.inner, c)
-    }
-}
-
-impl<C, T: CyclicOrdZeroCostDyn<C>> CyclicOrdZeroCostDyn<(ModularContext<T, C>, &C)>
-    for ModularDyn<T>
-{
-    fn cyclic_lt0_cost_d(ctx: &(ModularContext<T, C>, &C)) -> f64 {
-        let c = ctx.1;
-        T::cyclic_lt0_cost_d(c)
     }
 }
 
@@ -120,15 +105,6 @@ impl<C, T: CyclicOrdZeroDyn<C> + ClosedAddDyn<C> + ClosedSubDyn<C>>
             sum
         };
         Self::new_d(r, ctx)
-    }
-}
-
-impl<C, T: ClosedAddCostDyn<C> + CyclicOrdZeroCostDyn<C>>
-    ClosedAddCostDyn<(ModularContext<T, C>, &C)> for ModularDyn<T>
-{
-    fn add_cost_d(ctx: &(ModularContext<T, C>, &C)) -> f64 {
-        let c = ctx.1;
-        T::add_cost_d(c) + 2.0 * T::cyclic_lt0_cost_d(c)
     }
 }
 
@@ -170,15 +146,6 @@ impl<C, T: CyclicOrdZeroDyn<C> + ClosedAddDyn<C> + ClosedSubDyn<C>>
             diff
         };
         Self::new_d(r, ctx)
-    }
-}
-
-impl<C, T: ClosedSubCostDyn<C> + CyclicOrdZeroCostDyn<C>>
-    ClosedSubCostDyn<(ModularContext<T, C>, &C)> for ModularDyn<T>
-{
-    fn sub_cost_d(ctx: &(ModularContext<T, C>, &C)) -> f64 {
-        let c = ctx.1;
-        T::sub_cost_d(c) + 1.0 * T::cyclic_lt0_cost_d(c)
     }
 }
 
@@ -254,32 +221,6 @@ impl<
     }
 }
 
-impl<
-        C,
-        T: ClosedMulCostDyn<C>
-            + CenteredMulCostDyn<C>
-            + ClosedAddCostDyn<C>
-            + ClosedSubCostDyn<C>
-            + CyclicOrdZeroCostDyn<C>
-            + EuclidCostDyn<C>,
-    > ClosedMulCostDyn<(ModularContext<T, C>, &C)> for ModularDyn<T>
-{
-    fn mul_cost_d(ctx: &(ModularContext<T, C>, &C)) -> f64 {
-        let c = ctx.1;
-        if !&ctx.0.use_barrett {
-            T::mul_cost_d(c) + T::euclid_cost_d(c) - 1.0
-        } else {
-            T::centered_mul_cost_d(c)
-                + 1.0
-                    * (2.0 * T::centered_mul_cost_d(c)
-                        + T::mul_cost_d(c)
-                        + 3.0 * T::sub_cost_d(c)
-                        + T::cyclic_lt0_cost_d(c))
-                + T::euclid_cost_d(c)
-        }
-    }
-}
-
 #[test]
 fn mul_test() {
     use rand::rngs::mock::StepRng;
@@ -312,19 +253,11 @@ impl<C, T: CyclicOrdZeroDyn<C> + OneDyn<C>> OneDyn<(ModularContext<T, C>, &C)> f
     }
 }
 
-impl<C, D, T, Rhs: ClosedAddDyn<D> + ClosedSubDyn<D> + ZeroDyn<D> + OneDyn<D> + EuclidDyn<D>> PowDyn<C, D, Rhs>
-    for ModularDyn<T>
+impl<C, D, T, Rhs: ClosedAddDyn<D> + ClosedSubDyn<D> + ZeroDyn<D> + OneDyn<D> + EuclidDyn<D>>
+    PowDyn<C, D, Rhs> for ModularDyn<T>
 where
     Self: Clone + ClosedMulDyn<C> + OneDyn<C>,
 {
-}
-
-impl<C, D, T, Rhs: ClosedAddDyn<D> + ClosedSubDyn<D> + ZeroDyn<D> + OneDyn<D> + EuclidDyn<D>
-    > PowCostDyn<C, D, Rhs> for ModularDyn<T>
-    where
-    Self: ClosedMulCostDyn<C>
-{
-    
 }
 
 impl<C, T: CyclicOrdZeroDyn<C> + ClosedAddDyn<C> + ClosedMulDyn<C> + OneDyn<C> + EuclidDyn<C>>

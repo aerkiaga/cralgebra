@@ -5,7 +5,7 @@ use crate::*;
 /// Takes two elements `self` and `rhs` of the same type,
 /// and returns values satisfying `self = q * rhs + r",
 /// where, given some ordering, `r < rhs`.
-pub trait EuclidDyn<C>: Sized + ClosedMulDyn<C> + ClosedAddDyn<C> + EuclidCostDyn<C> {
+pub trait EuclidDyn<C>: Sized + ClosedMulDyn<C> + ClosedAddDyn<C> {
     /// Computes `q` so that `self = q * rhs + r`.
     fn euclid_div_d(&self, rhs: &Self, ctx: &C) -> Self;
 
@@ -16,11 +16,4 @@ pub trait EuclidDyn<C>: Sized + ClosedMulDyn<C> + ClosedAddDyn<C> + EuclidCostDy
     fn euclid_div_rem_d(&self, rhs: &Self, ctx: &C) -> (Self, Self) {
         (self.euclid_div_d(rhs, ctx), self.euclid_rem_d(rhs, ctx))
     }
-}
-
-/// Expected cost of operation.
-///
-/// This is necessary for runtime algorithm selection.
-pub trait EuclidCostDyn<C> {
-    fn euclid_cost_d(ctx: &C) -> f64;
 }

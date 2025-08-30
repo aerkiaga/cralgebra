@@ -5,9 +5,7 @@ use crate::*;
 /// Equivalent to [CyclicOrdDyn] with the lower bound set to
 /// [ZeroDyn::zero_d] plus a check against it. The default implementation can be
 /// overridden for efficiency.
-pub trait CyclicOrdZeroDyn<C>:
-    Sized + CyclicOrdDyn<C> + ZeroDyn<C> + CyclicOrdZeroCostDyn<C>
-{
+pub trait CyclicOrdZeroDyn<C>: Sized + CyclicOrdDyn<C> + ZeroDyn<C> {
     /// Returns whether `[0, self, high]` or `self == 0` for a cyclic order,
     /// equivalent to `self < high` for a linear order. [Read more][CyclicOrdZeroDyn]
     fn cyclic_lt0_d(&self, high: &Self, ctx: &C) -> bool {
@@ -15,12 +13,10 @@ pub trait CyclicOrdZeroDyn<C>:
     }
 }
 
-/// Expected cost of operation.
-///
-/// This is necessary for runtime algorithm selection.
-pub trait CyclicOrdZeroCostDyn<C>: CyclicOrdCostDyn<C> {
-    /// Estimates the cost of checking for cyclic ordering, in arbitrary units of time.
-    fn cyclic_lt0_cost_d(ctx: &C) -> f64 {
-        Self::cyclic_lt_cost_d(ctx)
+/// Equivalent to [CyclicOrdZeroDyn].
+pub trait LessThanDyn<C>: CyclicOrdZeroDyn<C> {
+    /// Equivalent to [CyclicOrdZeroDyn::cyclic_lt0_d].
+    fn lt_d(&self, rhs: &Self, ctx: &C) -> bool {
+        self.cyclic_lt0_d(rhs, ctx)
     }
 }

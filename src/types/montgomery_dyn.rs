@@ -5,35 +5,51 @@ use std::marker::PhantomData;
 /// Context for [MontgomeryDyn].
 pub struct MontgomeryContext<T, C> {
     phantom: PhantomData<C>,
-    modulo: T,            	// the modulo for this ring
-    one: MontgomeryDyn<T>, 	// r % modulo (1 in Montgomery form)
-    r2: MontgomeryDyn<T>, 	// r² % modulo (r % modulo in Montgomery form)
-    m_inv: T,             	// modulo⁻¹ % r
+    modulo: T,             // the modulo for this ring
+    one: MontgomeryDyn<T>, // r % modulo (1 in Montgomery form)
+    r2: MontgomeryDyn<T>,  // r² % modulo (r % modulo in Montgomery form)
+    m_inv: T,              // modulo⁻¹ % r
 }
 
-impl<'a, C: 'a, T: Clone + ClosedSubDyn<C> + ZeroDyn<C> + InvDyn<C> + EuclidDyn<C> + OrderDyn<C, (MontgomeryContext<T, C>, &'a C), MontgomeryDyn<T>>> MontgomeryContext<T, C> {
+impl<
+        'a,
+        C: 'a,
+        T: Clone
+            + ClosedSubDyn<C>
+            + ZeroDyn<C>
+            + InvDyn<C>
+            + EuclidDyn<C>
+            + OrderDyn<C, (MontgomeryContext<T, C>, &'a C), MontgomeryDyn<T>>,
+    > MontgomeryContext<T, C>
+{
     /// Creates a new context from a modulo.
     ///
     /// This operation may be expensive, so
     /// contexts should be reused as much as possible.
     pub fn new(modulo: T, ctx: &'a C) -> Self {
-    	let m_inv = modulo.inv_d(ctx);
-    	let one = MontgomeryDyn {inner: T::zero_d(ctx).sub_d(&modulo, ctx).euclid_rem_d(&modulo, ctx),};
-    	let dummy_context = MontgomeryContext {
-    		phantom: PhantomData,
-    		modulo: modulo.clone(),
-    		one: one.clone(),
-    		r2: MontgomeryDyn {inner: modulo.clone(),},
-    		m_inv: m_inv.clone(),
-    	};
-    	let mc = (dummy_context, ctx);
-    	let mut r2: MontgomeryDyn<T> = T::order_d(ctx, &mc);
+        let m_inv = modulo.inv_d(ctx);
+        let one = MontgomeryDyn {
+            inner: T::zero_d(ctx)
+                .sub_d(&modulo, ctx)
+                .euclid_rem_d(&modulo, ctx),
+        };
+        let dummy_context = MontgomeryContext {
+            phantom: PhantomData,
+            modulo: modulo.clone(),
+            one: one.clone(),
+            r2: MontgomeryDyn {
+                inner: modulo.clone(),
+            },
+            m_inv: m_inv.clone(),
+        };
+        let mc = (dummy_context, ctx);
+        let r2: MontgomeryDyn<T> = T::order_d(ctx, &mc);
         Self {
-        	phantom: PhantomData,
-    		modulo,
-    		one,
-    		r2,
-    		m_inv,
+            phantom: PhantomData,
+            modulo,
+            one,
+            r2,
+            m_inv,
         }
     }
 }
@@ -46,30 +62,32 @@ pub struct MontgomeryDyn<T> {
 }
 
 impl<T> MontgomeryDyn<T> {
-	pub fn new_d<C>(value: T, ctx: &(MontgomeryContext<T, C>, &C)) -> Self
-	where T: CyclicOrdZeroDyn<C>
+    pub fn new_d<C>(value: T, ctx: &(MontgomeryContext<T, C>, &C)) -> Self
+    where
+        T: CyclicOrdZeroDyn<C> + ClosedAddDyn<C> + ClosedSubDyn<C> + CenteredMulDyn<C>,
     {
-        let m = &ctx.0.modulo;
+        let r2 = &ctx.0.r2;
         let c = ctx.1;
-        debug_assert!(value.cyclic_lt0_d(m, c));
-        Self { inner: value }
+        Self { inner: value }.mul_d(r2, ctx)
     }
 }
 
 impl<T> MontgomeryDyn<T> {
-	pub fn inner_d<C>(&self, ctx: &(MontgomeryContext<T, C>, &C)) -> T
-	where T: ZeroDyn<C> + ClosedSubDyn<C> + ClosedMulDyn<C> + CenteredMulDyn<C> {
-		let m = &ctx.0.modulo;
-		let m_inv = &ctx.0.m_inv;
-		let c = ctx.1;
-		let q = self.inner.mul_d(m_inv, c);
-		let w = q.centered_mul_d(m, c);
-		if w.is_zero_d(c) {
-		    T::zero_d(c)
-		} else {
-		    m.sub_d(&w, c)
-		}
-	}
+    pub fn inner_d<C>(&self, ctx: &(MontgomeryContext<T, C>, &C)) -> T
+    where
+        T: ZeroDyn<C> + ClosedSubDyn<C> + ClosedMulDyn<C> + CenteredMulDyn<C>,
+    {
+        let m = &ctx.0.modulo;
+        let m_inv = &ctx.0.m_inv;
+        let c = ctx.1;
+        let q = self.inner.mul_d(m_inv, c);
+        let w = q.centered_mul_d(m, c);
+        if w.is_zero_d(c) {
+            T::zero_d(c)
+        } else {
+            m.sub_d(&w, c)
+        }
+    }
 }
 
 impl<C, T: CyclicOrdZeroDyn<C> + ClosedAddDyn<C> + ClosedSubDyn<C>>
@@ -87,16 +105,26 @@ impl<C, T: CyclicOrdZeroDyn<C> + ClosedAddDyn<C> + ClosedSubDyn<C>>
         } else {
             sum
         };
-        Self::new_d(r, ctx)
+        Self { inner: r }
     }
 }
 
-impl<C, T: ClosedAddCostDyn<C> + ClosedSubCostDyn<C> + CyclicOrdZeroCostDyn<C>>
-    ClosedAddCostDyn<(MontgomeryContext<T, C>, &C)> for MontgomeryDyn<T>
-{
-    fn add_cost_d(ctx: &(MontgomeryContext<T, C>, &C)) -> f64 {
-        let c = ctx.1;
-        T::add_cost_d(c) + 2.0 * T::cyclic_lt0_cost_d(c) + 0.5 * T::sub_cost_d(c)
+#[test]
+fn new_test() {
+    use rand::rngs::mock::StepRng;
+    let mut rng = StepRng::new(0, 0x54825a7f54825a7f);
+    let base_dist = StandardDyn::new(&());
+    for _ in 0..100 {
+        let mut m: Z2_8 = rng.sample(&base_dist);
+        m.inner |= 1;
+        let c = MontgomeryContext::new(m.clone(), &());
+        let ctx = (c, &());
+        let mut x_inner: Z2_8 = rng.sample(&base_dist);
+        x_inner = x_inner.euclid_rem_d(&m, &());
+        let x: MontgomeryDyn<Z2_8> = MontgomeryDyn::new_d(x_inner.clone(), &ctx);
+        let expected = x.inner_d(&ctx).inner as u8;
+        println!("{} mod {} = {}", x_inner.inner, m.inner, expected);
+        assert_eq!(x_inner.inner, expected);
     }
 }
 
@@ -114,47 +142,47 @@ fn add_test() {
         let a: MontgomeryDyn<Z2_8> = rng.sample(&montgomery_dist);
         let b: MontgomeryDyn<Z2_8> = rng.sample(&montgomery_dist);
         let r = a.add_d(&b, &ctx);
-        let expected = ((a.inner_d(&ctx).inner as u16 + b.inner_d(&ctx).inner as u16) % m.inner as u16) as u8;
+        let expected =
+            ((a.inner_d(&ctx).inner as u16 + b.inner_d(&ctx).inner as u16) % m.inner as u16) as u8;
         println!(
             "{} + {} mod {} = {}",
-            a.inner_d(&ctx).inner, b.inner_d(&ctx).inner, m.inner, expected
+            a.inner_d(&ctx).inner,
+            b.inner_d(&ctx).inner,
+            m.inner,
+            expected
         );
         assert_eq!(r.inner_d(&ctx).inner, expected);
     }
 }
 
-impl<C, T: CyclicOrdZeroDyn<C> + ZeroDyn<C>> ZeroDyn<(MontgomeryContext<T, C>, &C)> for MontgomeryDyn<T> {
+impl<C, T: CyclicOrdZeroDyn<C> + ZeroDyn<C>> ZeroDyn<(MontgomeryContext<T, C>, &C)>
+    for MontgomeryDyn<T>
+{
     fn zero_d(ctx: &(MontgomeryContext<T, C>, &C)) -> Self {
         let c = ctx.1;
-        Self::new_d(T::zero_d(c), ctx)
+        Self {
+            inner: T::zero_d(c),
+        }
     }
 }
 
-impl<C, T: CyclicOrdZeroDyn<C> + ClosedAddDyn<C> + ClosedSubDyn<C> + CenteredMulDyn<C>> ClosedMulDyn<(MontgomeryContext<T, C>, &C)> for MontgomeryDyn<T>
+impl<C, T: CyclicOrdZeroDyn<C> + ClosedAddDyn<C> + ClosedSubDyn<C> + CenteredMulDyn<C>>
+    ClosedMulDyn<(MontgomeryContext<T, C>, &C)> for MontgomeryDyn<T>
 {
     fn mul_d(&self, rhs: &Self, ctx: &(MontgomeryContext<T, C>, &C)) -> Self {
-    	let m = &ctx.0.modulo;
-		let m_inv = &ctx.0.m_inv;
-    	let c = ctx.1;
+        let m = &ctx.0.modulo;
+        let m_inv = &ctx.0.m_inv;
+        let c = ctx.1;
         let (low, high) = self.inner.widening_mul_d(&rhs.inner, c);
-		let q = low.mul_d(m_inv, c);
-		let w = q.centered_mul_d(m, c);
-		let a = high.sub_d(&w, c);
-		let r = if high.cyclic_lt0_d(&w, c) {
-			a.add_d(m, c)
-		} else {
-			a
-		};
-		Self::new_d(r, ctx)
-    }
-}
-
-impl<C, T: CyclicOrdZeroCostDyn<C> + ClosedAddCostDyn<C> + ClosedSubCostDyn<C> + ClosedMulCostDyn<C> + CenteredMulCostDyn<C>>
-    ClosedMulCostDyn<(MontgomeryContext<T, C>, &C)> for MontgomeryDyn<T>
-{
-    fn mul_cost_d(ctx: &(MontgomeryContext<T, C>, &C)) -> f64 {
-    	let c = &ctx.1;
-        T::centered_mul_cost_d(c) + T::mul_cost_d(c) + T::cyclic_lt0_cost_d(c) + 0.5 * T::add_cost_d(c) + T::sub_cost_d(c)
+        let q = low.mul_d(m_inv, c);
+        let w = q.centered_mul_d(m, c);
+        let a = high.sub_d(&w, c);
+        let r = if high.cyclic_lt0_d(&w, c) {
+            a.add_d(m, c)
+        } else {
+            a
+        };
+        Self { inner: r }
     }
 }
 
@@ -175,10 +203,14 @@ fn mul_test() {
         let a: MontgomeryDyn<Z2_8> = rng.sample(&montgomery_dist);
         let b: MontgomeryDyn<Z2_8> = rng.sample(&montgomery_dist);
         let r = a.mul_d(&b, &ctx);
-        let expected = ((a.inner_d(&ctx).inner as u16 * b.inner_d(&ctx).inner as u16) % m.inner as u16) as u8;
+        let expected =
+            ((a.inner_d(&ctx).inner as u16 * b.inner_d(&ctx).inner as u16) % m.inner as u16) as u8;
         println!(
             "{} * {} mod {} = {}",
-            a.inner_d(&ctx).inner, b.inner_d(&ctx).inner, m.inner, expected,
+            a.inner_d(&ctx).inner,
+            b.inner_d(&ctx).inner,
+            m.inner,
+            expected,
         );
         assert_eq!(r.inner_d(&ctx).inner, expected);
     }
@@ -190,17 +222,10 @@ impl<C, T: Clone + CyclicOrdZeroDyn<C>> OneDyn<(MontgomeryContext<T, C>, &C)> fo
     }
 }
 
-impl<C, D, T, Rhs: ClosedAddDyn<D> + ClosedSubDyn<D> + ZeroDyn<D> + OneDyn<D> + EuclidDyn<D>> PowDyn<C, D, Rhs>
-    for MontgomeryDyn<T>
+impl<C, D, T, Rhs: ClosedAddDyn<D> + ClosedSubDyn<D> + ZeroDyn<D> + OneDyn<D> + EuclidDyn<D>>
+    PowDyn<C, D, Rhs> for MontgomeryDyn<T>
 where
     Self: Clone + ClosedMulDyn<C> + OneDyn<C>,
-{
-}
-
-impl<C, D, T, Rhs: ClosedAddDyn<D> + ClosedSubDyn<D> + ZeroDyn<D> + OneDyn<D> + EuclidDyn<D>
-    > PowCostDyn<C, D, Rhs> for MontgomeryDyn<T>
-    where
-    Self: ClosedMulCostDyn<C>
 {
 }
 

@@ -24,16 +24,8 @@
 /// assert!(!b.cyclic_lt_d(&b, &c, &())); // ¬[b, b, c]
 /// assert!(!b.cyclic_lt_d(&a, &b, &())); // ¬[a, b, b]
 /// ```
-pub trait CyclicOrdDyn<C>: Sized + CyclicOrdCostDyn<C> {
+pub trait CyclicOrdDyn<C>: Sized {
     /// Returns whether `[low, self, high]` for a cyclic order,
     /// equivalent to `low < self < high` for a linear order. [Read more][CyclicOrdDyn]
     fn cyclic_lt_d(&self, low: &Self, high: &Self, ctx: &C) -> bool;
-}
-
-/// Expected cost of operation.
-///
-/// This is necessary for runtime algorithm selection.
-pub trait CyclicOrdCostDyn<C> {
-    /// Estimates the cost of checking for cyclic ordering, in arbitrary units of time.
-    fn cyclic_lt_cost_d(ctx: &C) -> f64;
 }

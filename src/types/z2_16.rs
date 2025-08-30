@@ -23,21 +23,9 @@ impl CyclicOrdDyn<()> for Z2_16 {
     }
 }
 
-impl CyclicOrdCostDyn<()> for Z2_16 {
-    fn cyclic_lt_cost_d(_ctx: &()) -> f64 {
-        2.0 * COSTS.scale * COSTS.cmp.r_16
-    }
-}
-
 impl CyclicOrdZeroDyn<()> for Z2_16 {
     fn cyclic_lt0_d(&self, high: &Self, _ctx: &()) -> bool {
         self.inner < high.inner
-    }
-}
-
-impl CyclicOrdZeroCostDyn<()> for Z2_16 {
-    fn cyclic_lt0_cost_d(_ctx: &()) -> f64 {
-        COSTS.scale * COSTS.cmp.r_16
     }
 }
 
@@ -49,12 +37,6 @@ impl ClosedAddDyn<()> for Z2_16 {
     }
 }
 
-impl ClosedAddCostDyn<()> for Z2_16 {
-    fn add_cost_d(_ctx: &()) -> f64 {
-        COSTS.scale * COSTS.add.r_16
-    }
-}
-
 impl ClosedSubDyn<()> for Z2_16 {
     fn sub_d(&self, rhs: &Self, _ctx: &()) -> Self {
         Self {
@@ -62,8 +44,6 @@ impl ClosedSubDyn<()> for Z2_16 {
         }
     }
 }
-
-impl ClosedSubCostDyn<()> for Z2_16 {}
 
 impl ZeroDyn<()> for Z2_16 {
     fn zero_d(_ctx: &()) -> Self {
@@ -79,12 +59,6 @@ impl ClosedMulDyn<()> for Z2_16 {
     }
 }
 
-impl ClosedMulCostDyn<()> for Z2_16 {
-    fn mul_cost_d(_ctx: &()) -> f64 {
-        COSTS.scale * COSTS.mul.r_16
-    }
-}
-
 impl CenteredMulDyn<()> for Z2_16 {
     fn centered_mul_d(&self, rhs: &Self, _ctx: &()) -> Self {
         self.widening_mul_d(rhs, &()).1
@@ -94,8 +68,6 @@ impl CenteredMulDyn<()> for Z2_16 {
         (Self { inner: low }, Self { inner: high })
     }
 }
-
-impl CenteredMulCostDyn<()> for Z2_16 {}
 
 impl OneDyn<()> for Z2_16 {
     fn one_d(_ctx: &()) -> Self {
@@ -125,10 +97,7 @@ fn inv_test() {
         a.inner |= 1;
         let r = a.inv_d(&());
         let one = a.mul_d(&r, &());
-        println!(
-            "{}⁻¹ = {}",
-            a.inner, r.inner
-        );
+        println!("{}⁻¹ = {}", a.inner, r.inner);
         assert!(one.is_one_d(&()));
     }
 }
@@ -144,12 +113,6 @@ impl EuclidDyn<()> for Z2_16 {
         Self {
             inner: self.inner.rem_euclid(rhs.inner),
         }
-    }
-}
-
-impl EuclidCostDyn<()> for Z2_16 {
-    fn euclid_cost_d(_ctx: &()) -> f64 {
-        COSTS.scale * COSTS.div.r_16
     }
 }
 

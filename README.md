@@ -49,7 +49,7 @@ rpath = false
 
 Further tips:
 
-- Use the most specific type for each task, like `Z2_8` instead of `Z2_N<8>`.
+- Use the most specific type or method for each task.
 - Use `MontgomeryDyn` instead of `ModularDyn` if doing multiple operations in series, containing multiplications.
 
 ## Alternative projects

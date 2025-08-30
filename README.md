@@ -1,5 +1,5 @@
 # cralgebra
-A relatively fast crypto algebra library.
+A fast crypto algebra library.
 
 ## Using the API
 The API is split into a few modules:

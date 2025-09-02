@@ -71,35 +71,36 @@ impl<const N: usize> ZeroDyn<()> for Z2_64N<N> {
 impl<const N: usize> ClosedMulDyn<()> for Z2_64N<N> {
     fn mul_d(&self, rhs: &Self, _ctx: &()) -> Self {
         // TODO: optimize (Karatsuba, etc.)
-        /*let mut chunks = std::array::from_fn(|_| 0);
-        let mut carry: u128 = 0;
-        for n in 0..N {
-            let mut r: u64 = 0;
-            let mut c = false;
-            for m in 0..n {
-                let (rl, rh) = self.chunks[m].widening_mul(rhs.chunks[n - m]);
-                (r, c) = r.carrying_add(rl, c);
-                carry += rh as u128;
-            }
-            chunks[n] = r;
-        }
-        Self {
-            chunks,
-        }*/
         let mut carry: u128 = 0;
         Self {
             chunks: std::array::from_fn(|n| {
                 let mut r: u64 = (carry & 0xffffffffffffffff) as u64;
                 carry >>= 64;
-                let mut c = false;
-                for m in 0..n {
+                for m in 0..=n {
                     let (rl, rh) = self.chunks[m].widening_mul(rhs.chunks[n - m]);
+                    let mut c = false;
                     (r, c) = r.carrying_add(rl, c);
-                    carry += rh as u128;
+                    (carry, _) = carry.carrying_add(rh as u128, c);
                 }
                 r
             }),
         }
+    }
+}
+
+#[test]
+fn mul_test() {
+    use rand::rngs::mock::StepRng;
+    let mut rng = StepRng::new(0, 0x54825a7f54825a7f);
+    let base_dist = StandardDyn::new(&());
+    for _ in 0..100 {
+        let mut a: Z2_64N<80> = rng.sample(&base_dist);
+        let mut b: Z2_64N<80> = Z2_64N {
+            chunks: std::array::from_fn(|_| 0xffffffffffffffff),
+        };
+        let mut r = a.mul_d(&b, &());
+        let mut z = r.mul_d(&b, &());
+        assert!(z == a);
     }
 }
 

@@ -4,9 +4,11 @@ See also [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [0.1.1] - 2025-09-02
+
 ### Added
 
-- Test for `Z2_64N` addition.
+- Tests for `Z2_64N` addition and multiplication.
 - This `CHANGELOG.md` file.
 - "Status" section in `README.md`.
 

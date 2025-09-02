@@ -1,5 +1,5 @@
 use crate::*;
-use rand::{distributions::Standard, Rng};
+use rand::{Rng, distributions::Standard};
 
 /// Discrete Gaussian distribution with optional parameter.
 pub struct DiscreteGaussianDyn<'a, C> {

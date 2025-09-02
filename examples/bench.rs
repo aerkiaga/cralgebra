@@ -1,5 +1,5 @@
 use cralgebra::{algorithms::*, misc::*, ops::*, types::*};
-use rand::{distributions::Distribution, rngs::mock::StepRng, Rng};
+use rand::{Rng, distributions::Distribution, rngs::mock::StepRng};
 use std::hint::black_box;
 use std::time::Instant;
 

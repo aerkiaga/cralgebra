@@ -1,7 +1,7 @@
 use crate::*;
 use rand::{
-    distributions::{Distribution, Standard},
     Rng,
+    distributions::{Distribution, Standard},
 };
 
 /// The `Z2^64` integer ring.

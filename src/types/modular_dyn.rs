@@ -1,5 +1,5 @@
 use crate::*;
-use rand::{distributions::Distribution, Rng};
+use rand::{Rng, distributions::Distribution};
 use std::marker::PhantomData;
 
 /// Context for [ModularDyn].
@@ -12,14 +12,9 @@ pub struct ModularContext<T, C> {
 }
 
 impl<
-        C,
-        T: CyclicOrdZeroDyn<C>
-            + ClosedAddDyn<C>
-            + ClosedSubDyn<C>
-            + ZeroDyn<C>
-            + OneDyn<C>
-            + EuclidDyn<C>,
-    > ModularContext<T, C>
+    C,
+    T: CyclicOrdZeroDyn<C> + ClosedAddDyn<C> + ClosedSubDyn<C> + ZeroDyn<C> + OneDyn<C> + EuclidDyn<C>,
+> ModularContext<T, C>
 {
     /// Creates a new context from a modulo.
     ///
@@ -183,14 +178,14 @@ impl<C, T: CyclicOrdZeroDyn<C> + ZeroDyn<C>> ZeroDyn<(ModularContext<T, C>, &C)>
 }
 
 impl<
-        C,
-        T: CyclicOrdZeroDyn<C>
-            + ClosedSubDyn<C>
-            + ZeroDyn<C>
-            + CenteredMulDyn<C>
-            + OneDyn<C>
-            + EuclidDyn<C>,
-    > ClosedMulDyn<(ModularContext<T, C>, &C)> for ModularDyn<T>
+    C,
+    T: CyclicOrdZeroDyn<C>
+        + ClosedSubDyn<C>
+        + ZeroDyn<C>
+        + CenteredMulDyn<C>
+        + OneDyn<C>
+        + EuclidDyn<C>,
+> ClosedMulDyn<(ModularContext<T, C>, &C)> for ModularDyn<T>
 {
     fn mul_d(&self, rhs: &Self, ctx: &(ModularContext<T, C>, &C)) -> Self {
         let m = &ctx.0.modulo;

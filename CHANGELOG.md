@@ -6,11 +6,13 @@ See also [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Added
 
+- Test for `Z2_64N` addition.
 - This `CHANGELOG.md` file.
 - "Status" section in `README.md`.
 
 ### Fixed
 
+- `Z2_64N` multiplication.
 - Alternative project link in `README.md`.
 
 ### Removed

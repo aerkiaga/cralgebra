@@ -1,5 +1,5 @@
 use crate::*;
-use rand::{distributions::Distribution, Rng};
+use rand::{Rng, distributions::Distribution};
 use std::marker::PhantomData;
 
 /// Context for [MontgomeryDyn].
@@ -12,15 +12,15 @@ pub struct MontgomeryContext<T, C> {
 }
 
 impl<
-        'a,
-        C: 'a,
-        T: Clone
-            + ClosedSubDyn<C>
-            + ZeroDyn<C>
-            + InvDyn<C>
-            + EuclidDyn<C>
-            + OrderDyn<C, (MontgomeryContext<T, C>, &'a C), MontgomeryDyn<T>>,
-    > MontgomeryContext<T, C>
+    'a,
+    C: 'a,
+    T: Clone
+        + ClosedSubDyn<C>
+        + ZeroDyn<C>
+        + InvDyn<C>
+        + EuclidDyn<C>
+        + OrderDyn<C, (MontgomeryContext<T, C>, &'a C), MontgomeryDyn<T>>,
+> MontgomeryContext<T, C>
 {
     /// Creates a new context from a modulo.
     ///

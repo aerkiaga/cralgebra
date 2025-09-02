@@ -4,17 +4,17 @@ A fast crypto algebra library.
 ## Status
 
 - ✅: complete
-- ✍: partial
+- ⚡: partial
 - ❌: none
 
 | Feature | Completion | Optimization |
 |---------|------------|--------------|
 | Modular arithmetic | ✅ | ✅ |
-| Big integers | ✍ | ❌ |
-| Cyclotomic polynomials | ✍ | ❌ |
-| Primality testing | ✍ | ✍ |
-| Uniform sampling | ✍ | ✅ |
-| Discrete Gaussian sampling | ✍ | ✅ |
+| Big integers | ⚡ | ❌ |
+| Cyclotomic polynomials | ⚡ | ❌ |
+| Primality testing | ⚡ | ⚡ |
+| Uniform sampling | ⚡ | ✅ |
+| Discrete Gaussian sampling | ⚡ | ✅ |
 
 ## Using the API
 The API is split into a few modules:

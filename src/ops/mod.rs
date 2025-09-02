@@ -1,4 +1,4 @@
-//! Traits defining operations.
+//! Traits defining operations on algebraic types.
 
 mod cyclic_ord_dyn;
 pub use cyclic_ord_dyn::*;

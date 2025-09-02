@@ -1,4 +1,4 @@
-//! Algebraic objects.
+//! Types of algebraic objects.
 
 mod z2_8;
 pub use z2_8::*;

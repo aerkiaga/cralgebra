@@ -18,7 +18,7 @@ pub fn miller_rabin<
     if n.is_zero_d(ctx) || n.is_one_d(ctx) {
         return false;
     }
-    let mc = (ModularContext::new(n.clone(), ctx), ctx);
+    let mc = (ModularCtx::new(n.clone(), ctx), ctx);
     let am = ModularDyn::new_d(a.clone(), &mc);
     let mut s = T::zero_d(ctx);
     let mut d = n.sub_d(&T::one_d(ctx), ctx);

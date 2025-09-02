@@ -3,6 +3,18 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 See also [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
+This release introduces breaking changes.
+
+### Added
+- Implementation of the non-dynamic `ClosedAdd` trait for all types supporting it.
+- Documentation for the top-level crate.
+
+### Changed
+- **Breaking:** renamed every `*Context` to `*Ctx` for brevity.
+- **Breaking:** renamed the `misc` module to `dists`.
+
+### Removed
+- Examples and API guidelines from `README.md`.
 
 ## [0.1.1] - 2025-09-02
 

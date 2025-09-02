@@ -43,6 +43,8 @@ impl ClosedAddDyn<()> for Z2_8 {
     }
 }
 
+impl ClosedAdd for Z2_8 {}
+
 impl ClosedSubDyn<()> for Z2_8 {
     fn sub_d(&self, rhs: &Self, _ctx: &()) -> Self {
         Self {

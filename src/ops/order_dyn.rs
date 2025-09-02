@@ -6,6 +6,6 @@
 /// taking an extra parameter that describes the
 /// underlying algebraic structure at runtime.
 pub trait OrderDyn<C, D, T>: Sized {
-    /// Computes the additive order of `Self`. [Read more][OrderModDyn]
+    /// Computes the additive order of `Self`. [Read more][OrderDyn]
     fn order_d(ctx: &C, ctx2: &D) -> T;
 }

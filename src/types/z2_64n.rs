@@ -94,12 +94,12 @@ fn mul_test() {
     let mut rng = StepRng::new(0, 0x54825a7f54825a7f);
     let base_dist = StandardDyn::new(&());
     for _ in 0..100 {
-        let mut a: Z2_64N<80> = rng.sample(&base_dist);
-        let mut b: Z2_64N<80> = Z2_64N {
+        let a: Z2_64N<80> = rng.sample(&base_dist);
+        let b: Z2_64N<80> = Z2_64N {
             chunks: std::array::from_fn(|_| 0xffffffffffffffff),
         };
-        let mut r = a.mul_d(&b, &());
-        let mut z = r.mul_d(&b, &());
+        let r = a.mul_d(&b, &());
+        let z = r.mul_d(&b, &());
         assert!(z == a);
     }
 }

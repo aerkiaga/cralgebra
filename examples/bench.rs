@@ -1,4 +1,4 @@
-use cralgebra::{algorithms::*, misc::*, ops::*, types::*};
+use cralgebra::{algorithms::*, dists::*, ops::*, types::*};
 use rand::{Rng, distributions::Distribution, rngs::mock::StepRng};
 use std::hint::black_box;
 use std::time::Instant;
@@ -99,44 +99,44 @@ fn main() {
 
     bench_add::<_, ModularDyn<Z2_8>>(
         "ModularDyn<Z2_8>",
-        &(ModularContext::new(Z2_8::one_d(&()), &()), &()),
+        &(ModularCtx::new(Z2_8::one_d(&()), &()), &()),
     );
     bench_add::<_, ModularDyn<Z2_16>>(
         "ModularDyn<Z2_16>",
-        &(ModularContext::new(Z2_16::one_d(&()), &()), &()),
+        &(ModularCtx::new(Z2_16::one_d(&()), &()), &()),
     );
     bench_add::<_, ModularDyn<Z2_32>>(
         "ModularDyn<Z2_32>",
-        &(ModularContext::new(Z2_32::one_d(&()), &()), &()),
+        &(ModularCtx::new(Z2_32::one_d(&()), &()), &()),
     );
     bench_add::<_, ModularDyn<Z2_64>>(
         "ModularDyn<Z2_64>",
-        &(ModularContext::new(Z2_64::one_d(&()), &()), &()),
+        &(ModularCtx::new(Z2_64::one_d(&()), &()), &()),
     );
     bench_add::<_, ModularDyn<Z2_128>>(
         "ModularDyn<Z2_128>",
-        &(ModularContext::new(Z2_128::one_d(&()), &()), &()),
+        &(ModularCtx::new(Z2_128::one_d(&()), &()), &()),
     );
 
     bench_add::<_, MontgomeryDyn<Z2_8>>(
         "MontgomeryDyn<Z2_8>",
-        &(MontgomeryContext::new(Z2_8::one_d(&()), &()), &()),
+        &(MontgomeryCtx::new(Z2_8::one_d(&()), &()), &()),
     );
     bench_add::<_, MontgomeryDyn<Z2_16>>(
         "MontgomeryDyn<Z2_16>",
-        &(MontgomeryContext::new(Z2_16::one_d(&()), &()), &()),
+        &(MontgomeryCtx::new(Z2_16::one_d(&()), &()), &()),
     );
     bench_add::<_, MontgomeryDyn<Z2_32>>(
         "MontgomeryDyn<Z2_32>",
-        &(MontgomeryContext::new(Z2_32::one_d(&()), &()), &()),
+        &(MontgomeryCtx::new(Z2_32::one_d(&()), &()), &()),
     );
     bench_add::<_, MontgomeryDyn<Z2_64>>(
         "MontgomeryDyn<Z2_64>",
-        &(MontgomeryContext::new(Z2_64::one_d(&()), &()), &()),
+        &(MontgomeryCtx::new(Z2_64::one_d(&()), &()), &()),
     );
     bench_add::<_, MontgomeryDyn<Z2_128>>(
         "MontgomeryDyn<Z2_128>",
-        &(MontgomeryContext::new(Z2_128::one_d(&()), &()), &()),
+        &(MontgomeryCtx::new(Z2_128::one_d(&()), &()), &()),
     );
 
     println!("\nClosedMulDyn");
@@ -151,61 +151,61 @@ fn main() {
 
     bench_mul::<_, ModularDyn<Z2_8>>(
         "ModularDyn<Z2_8> (L)",
-        &(ModularContext::new(Z2_8 { inner: 10 }, &()), &()),
+        &(ModularCtx::new(Z2_8 { inner: 10 }, &()), &()),
     );
     bench_mul::<_, ModularDyn<Z2_8>>(
         "ModularDyn<Z2_8> (B)",
-        &(ModularContext::new(Z2_8 { inner: 1 << 6 }, &()), &()),
+        &(ModularCtx::new(Z2_8 { inner: 1 << 6 }, &()), &()),
     );
     bench_mul::<_, ModularDyn<Z2_16>>(
         "ModularDyn<Z2_16> (L)",
-        &(ModularContext::new(Z2_16 { inner: 10 }, &()), &()),
+        &(ModularCtx::new(Z2_16 { inner: 10 }, &()), &()),
     );
     bench_mul::<_, ModularDyn<Z2_16>>(
         "ModularDyn<Z2_16> (B)",
-        &(ModularContext::new(Z2_16 { inner: 1 << 10 }, &()), &()),
+        &(ModularCtx::new(Z2_16 { inner: 1 << 10 }, &()), &()),
     );
     bench_mul::<_, ModularDyn<Z2_32>>(
         "ModularDyn<Z2_32> (L)",
-        &(ModularContext::new(Z2_32 { inner: 10 }, &()), &()),
+        &(ModularCtx::new(Z2_32 { inner: 10 }, &()), &()),
     );
     bench_mul::<_, ModularDyn<Z2_32>>(
         "ModularDyn<Z2_32> (B)",
-        &(ModularContext::new(Z2_32 { inner: 1 << 18 }, &()), &()),
+        &(ModularCtx::new(Z2_32 { inner: 1 << 18 }, &()), &()),
     );
     bench_mul::<_, ModularDyn<Z2_64>>(
         "ModularDyn<Z2_64> (L)",
-        &(ModularContext::new(Z2_64 { inner: 10 }, &()), &()),
+        &(ModularCtx::new(Z2_64 { inner: 10 }, &()), &()),
     );
     bench_mul::<_, ModularDyn<Z2_64>>(
         "ModularDyn<Z2_64> (B)",
-        &(ModularContext::new(Z2_64 { inner: 1 << 34 }, &()), &()),
+        &(ModularCtx::new(Z2_64 { inner: 1 << 34 }, &()), &()),
     );
     bench_mul::<_, ModularDyn<Z2_128>>(
         "ModularDyn<Z2_128> (L)",
-        &(ModularContext::new(Z2_128 { inner: 10 }, &()), &()),
+        &(ModularCtx::new(Z2_128 { inner: 10 }, &()), &()),
     );
     bench_mul::<_, ModularDyn<Z2_128>>(
         "ModularDyn<Z2_128> (B)",
-        &(ModularContext::new(Z2_128 { inner: 1 << 66 }, &()), &()),
+        &(ModularCtx::new(Z2_128 { inner: 1 << 66 }, &()), &()),
     );
 
     bench_mul::<_, MontgomeryDyn<Z2_8>>(
         "MontgomeryDyn<Z2_8>",
-        &(MontgomeryContext::new(Z2_8 { inner: 100 }, &()), &()),
+        &(MontgomeryCtx::new(Z2_8 { inner: 100 }, &()), &()),
     );
     bench_mul::<_, MontgomeryDyn<Z2_16>>(
         "MontgomeryDyn<Z2_16>",
-        &(MontgomeryContext::new(Z2_16 { inner: 10000 }, &()), &()),
+        &(MontgomeryCtx::new(Z2_16 { inner: 10000 }, &()), &()),
     );
     bench_mul::<_, MontgomeryDyn<Z2_32>>(
         "MontgomeryDyn<Z2_32>",
-        &(MontgomeryContext::new(Z2_32 { inner: 100000000 }, &()), &()),
+        &(MontgomeryCtx::new(Z2_32 { inner: 100000000 }, &()), &()),
     );
     bench_mul::<_, MontgomeryDyn<Z2_64>>(
         "MontgomeryDyn<Z2_64>",
         &(
-            MontgomeryContext::new(
+            MontgomeryCtx::new(
                 Z2_64 {
                     inner: 10000000000000000,
                 },
@@ -217,7 +217,7 @@ fn main() {
     bench_mul::<_, MontgomeryDyn<Z2_128>>(
         "MontgomeryDyn<Z2_128>",
         &(
-            MontgomeryContext::new(
+            MontgomeryCtx::new(
                 Z2_128 {
                     inner: 100000000000000000000000000000000,
                 },
@@ -231,7 +231,7 @@ fn main() {
     bench_closure(
         "ModularDyn<Z2_8> (2)",
         |a: &ModularDyn<Z2_8>, _, ctx| a.pow_d(&Z2_8 { inner: 100 }, ctx, &()),
-        &(ModularContext::new(Z2_8 { inner: 1 << 6 }, &()), &()),
+        &(ModularCtx::new(Z2_8 { inner: 1 << 6 }, &()), &()),
     );
     bench_closure(
         "ModularDyn<Z2_8> (38)",
@@ -244,12 +244,12 @@ fn main() {
                 &(),
             )
         },
-        &(ModularContext::new(Z2_8 { inner: 1 << 6 }, &()), &()),
+        &(ModularCtx::new(Z2_8 { inner: 1 << 6 }, &()), &()),
     );
     bench_closure(
         "ModularDyn<Z2_128> (2)",
         |a: &ModularDyn<Z2_128>, _, ctx| a.pow_d(&Z2_8 { inner: 100 }, ctx, &()),
-        &(ModularContext::new(Z2_128 { inner: 1 << 66 }, &()), &()),
+        &(ModularCtx::new(Z2_128 { inner: 1 << 66 }, &()), &()),
     );
     bench_closure(
         "ModularDyn<Z2_128> (38)",
@@ -262,13 +262,13 @@ fn main() {
                 &(),
             )
         },
-        &(ModularContext::new(Z2_128 { inner: 1 << 66 }, &()), &()),
+        &(ModularCtx::new(Z2_128 { inner: 1 << 66 }, &()), &()),
     );
 
     bench_closure(
         "MontgomeryDyn<Z2_8> (2)",
         |a: &MontgomeryDyn<Z2_8>, _, ctx| a.pow_d(&Z2_8 { inner: 100 }, ctx, &()),
-        &(MontgomeryContext::new(Z2_8 { inner: 1 << 6 }, &()), &()),
+        &(MontgomeryCtx::new(Z2_8 { inner: 1 << 6 }, &()), &()),
     );
     bench_closure(
         "MontgomeryDyn<Z2_8> (38)",
@@ -281,12 +281,12 @@ fn main() {
                 &(),
             )
         },
-        &(MontgomeryContext::new(Z2_8 { inner: 1 << 6 }, &()), &()),
+        &(MontgomeryCtx::new(Z2_8 { inner: 1 << 6 }, &()), &()),
     );
     bench_closure(
         "MontgomeryDyn<Z2_128> (2)",
         |a: &MontgomeryDyn<Z2_128>, _, ctx| a.pow_d(&Z2_8 { inner: 100 }, ctx, &()),
-        &(MontgomeryContext::new(Z2_128 { inner: 1 << 66 }, &()), &()),
+        &(MontgomeryCtx::new(Z2_128 { inner: 1 << 66 }, &()), &()),
     );
     bench_closure(
         "MontgomeryDyn<Z2_128> (38)",
@@ -299,7 +299,7 @@ fn main() {
                 &(),
             )
         },
-        &(MontgomeryContext::new(Z2_128 { inner: 1 << 66 }, &()), &()),
+        &(MontgomeryCtx::new(Z2_128 { inner: 1 << 66 }, &()), &()),
     );
 
     println!("\nInvDyn");
@@ -311,54 +311,54 @@ fn main() {
 
     println!("\nnew");
     bench_closure(
-        "ModularContext<Z2_8, _>",
-        |a: &Z2_8, _, ctx| ModularContext::new(Z2_8 { inner: a.inner | 1 }, ctx),
+        "ModularCtx<Z2_8, _>",
+        |a: &Z2_8, _, ctx| ModularCtx::new(Z2_8 { inner: a.inner | 1 }, ctx),
         &(),
     );
     bench_closure(
-        "ModularContext<Z2_16, _>",
-        |a: &Z2_16, _, ctx| ModularContext::new(Z2_16 { inner: a.inner | 1 }, ctx),
+        "ModularCtx<Z2_16, _>",
+        |a: &Z2_16, _, ctx| ModularCtx::new(Z2_16 { inner: a.inner | 1 }, ctx),
         &(),
     );
     bench_closure(
-        "ModularContext<Z2_32, _>",
-        |a: &Z2_32, _, ctx| ModularContext::new(Z2_32 { inner: a.inner | 1 }, ctx),
+        "ModularCtx<Z2_32, _>",
+        |a: &Z2_32, _, ctx| ModularCtx::new(Z2_32 { inner: a.inner | 1 }, ctx),
         &(),
     );
     bench_closure(
-        "ModularContext<Z2_64, _>",
-        |a: &Z2_64, _, ctx| ModularContext::new(Z2_64 { inner: a.inner | 1 }, ctx),
+        "ModularCtx<Z2_64, _>",
+        |a: &Z2_64, _, ctx| ModularCtx::new(Z2_64 { inner: a.inner | 1 }, ctx),
         &(),
     );
     bench_closure(
-        "ModularContext<Z2_128, _>",
-        |a: &Z2_128, _, ctx| ModularContext::new(Z2_128 { inner: a.inner | 1 }, ctx),
+        "ModularCtx<Z2_128, _>",
+        |a: &Z2_128, _, ctx| ModularCtx::new(Z2_128 { inner: a.inner | 1 }, ctx),
         &(),
     );
 
     bench_closure(
-        "MontgomeryContext<Z2_8, _>",
-        |a: &Z2_8, _, ctx| MontgomeryContext::new(Z2_8 { inner: a.inner | 1 }, ctx),
+        "MontgomeryCtx<Z2_8, _>",
+        |a: &Z2_8, _, ctx| MontgomeryCtx::new(Z2_8 { inner: a.inner | 1 }, ctx),
         &(),
     );
     bench_closure(
-        "MontgomeryContext<Z2_16, _>",
-        |a: &Z2_16, _, ctx| MontgomeryContext::new(Z2_16 { inner: a.inner | 1 }, ctx),
+        "MontgomeryCtx<Z2_16, _>",
+        |a: &Z2_16, _, ctx| MontgomeryCtx::new(Z2_16 { inner: a.inner | 1 }, ctx),
         &(),
     );
     bench_closure(
-        "MontgomeryContext<Z2_32, _>",
-        |a: &Z2_32, _, ctx| MontgomeryContext::new(Z2_32 { inner: a.inner | 1 }, ctx),
+        "MontgomeryCtx<Z2_32, _>",
+        |a: &Z2_32, _, ctx| MontgomeryCtx::new(Z2_32 { inner: a.inner | 1 }, ctx),
         &(),
     );
     bench_closure(
-        "MontgomeryContext<Z2_64, _>",
-        |a: &Z2_64, _, ctx| MontgomeryContext::new(Z2_64 { inner: a.inner | 1 }, ctx),
+        "MontgomeryCtx<Z2_64, _>",
+        |a: &Z2_64, _, ctx| MontgomeryCtx::new(Z2_64 { inner: a.inner | 1 }, ctx),
         &(),
     );
     bench_closure(
-        "MontgomeryContext<Z2_128, _>",
-        |a: &Z2_128, _, ctx| MontgomeryContext::new(Z2_128 { inner: a.inner | 1 }, ctx),
+        "MontgomeryCtx<Z2_128, _>",
+        |a: &Z2_128, _, ctx| MontgomeryCtx::new(Z2_128 { inner: a.inner | 1 }, ctx),
         &(),
     );
 

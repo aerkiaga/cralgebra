@@ -4,7 +4,7 @@ use std::marker::PhantomData;
 
 /// Context for [ModularDyn].
 #[derive(Clone)]
-pub struct ModularContext<T, C> {
+pub struct ModularCtx<T, C> {
     phantom: PhantomData<C>,
     modulo: T, // the modulo for this ring
     use_barrett: bool,
@@ -14,7 +14,7 @@ pub struct ModularContext<T, C> {
 impl<
     C,
     T: CyclicOrdZeroDyn<C> + ClosedAddDyn<C> + ClosedSubDyn<C> + ZeroDyn<C> + OneDyn<C> + EuclidDyn<C>,
-> ModularContext<T, C>
+> ModularCtx<T, C>
 {
     /// Creates a new context from a modulo.
     ///
@@ -59,7 +59,7 @@ impl<T> ModularDyn<T> {
     /// A safe constructor for [ModularDyn].
     ///
     /// Will check against modulus in debug mode.
-    pub fn new_d<C>(value: T, ctx: &(ModularContext<T, C>, &C)) -> Self
+    pub fn new_d<C>(value: T, ctx: &(ModularCtx<T, C>, &C)) -> Self
     where
         T: CyclicOrdZeroDyn<C>,
     {
@@ -70,24 +70,24 @@ impl<T> ModularDyn<T> {
     }
 }
 
-impl<C, T: CyclicOrdDyn<C>> CyclicOrdDyn<(ModularContext<T, C>, &C)> for ModularDyn<T> {
-    fn cyclic_lt_d(&self, low: &Self, high: &Self, ctx: &(ModularContext<T, C>, &C)) -> bool {
+impl<C, T: CyclicOrdDyn<C>> CyclicOrdDyn<(ModularCtx<T, C>, &C)> for ModularDyn<T> {
+    fn cyclic_lt_d(&self, low: &Self, high: &Self, ctx: &(ModularCtx<T, C>, &C)) -> bool {
         let c = ctx.1;
         self.inner.cyclic_lt_d(&low.inner, &high.inner, c)
     }
 }
 
-impl<C, T: CyclicOrdZeroDyn<C>> CyclicOrdZeroDyn<(ModularContext<T, C>, &C)> for ModularDyn<T> {
-    fn cyclic_lt0_d(&self, high: &Self, ctx: &(ModularContext<T, C>, &C)) -> bool {
+impl<C, T: CyclicOrdZeroDyn<C>> CyclicOrdZeroDyn<(ModularCtx<T, C>, &C)> for ModularDyn<T> {
+    fn cyclic_lt0_d(&self, high: &Self, ctx: &(ModularCtx<T, C>, &C)) -> bool {
         let c = ctx.1;
         self.inner.cyclic_lt0_d(&high.inner, c)
     }
 }
 
 impl<C, T: CyclicOrdZeroDyn<C> + ClosedAddDyn<C> + ClosedSubDyn<C>>
-    ClosedAddDyn<(ModularContext<T, C>, &C)> for ModularDyn<T>
+    ClosedAddDyn<(ModularCtx<T, C>, &C)> for ModularDyn<T>
 {
-    fn add_d(&self, rhs: &Self, ctx: &(ModularContext<T, C>, &C)) -> Self {
+    fn add_d(&self, rhs: &Self, ctx: &(ModularCtx<T, C>, &C)) -> Self {
         let m = &ctx.0.modulo;
         let c = ctx.1;
         let sum = self.inner.add_d(&rhs.inner, c);
@@ -113,7 +113,7 @@ fn add_test() {
         if m.is_zero_d(&()) {
             continue;
         }
-        let c = ModularContext::new(m.clone(), &());
+        let c = ModularCtx::new(m.clone(), &());
         let ctx = (c, &());
         let modular_dist = StandardDyn::new(&ctx);
         let a: ModularDyn<Z2_8> = rng.sample(&modular_dist);
@@ -129,9 +129,9 @@ fn add_test() {
 }
 
 impl<C, T: CyclicOrdZeroDyn<C> + ClosedAddDyn<C> + ClosedSubDyn<C>>
-    ClosedSubDyn<(ModularContext<T, C>, &C)> for ModularDyn<T>
+    ClosedSubDyn<(ModularCtx<T, C>, &C)> for ModularDyn<T>
 {
-    fn sub_d(&self, rhs: &Self, ctx: &(ModularContext<T, C>, &C)) -> Self {
+    fn sub_d(&self, rhs: &Self, ctx: &(ModularCtx<T, C>, &C)) -> Self {
         let m = &ctx.0.modulo;
         let c = ctx.1;
         let diff = self.inner.sub_d(&rhs.inner, c);
@@ -154,7 +154,7 @@ fn sub_test() {
         if m.is_zero_d(&()) {
             continue;
         }
-        let c = ModularContext::new(m.clone(), &());
+        let c = ModularCtx::new(m.clone(), &());
         let ctx = (c, &());
         let modular_dist = StandardDyn::new(&ctx);
         let a: ModularDyn<Z2_8> = rng.sample(&modular_dist);
@@ -170,8 +170,8 @@ fn sub_test() {
     }
 }
 
-impl<C, T: CyclicOrdZeroDyn<C> + ZeroDyn<C>> ZeroDyn<(ModularContext<T, C>, &C)> for ModularDyn<T> {
-    fn zero_d(ctx: &(ModularContext<T, C>, &C)) -> Self {
+impl<C, T: CyclicOrdZeroDyn<C> + ZeroDyn<C>> ZeroDyn<(ModularCtx<T, C>, &C)> for ModularDyn<T> {
+    fn zero_d(ctx: &(ModularCtx<T, C>, &C)) -> Self {
         let c = ctx.1;
         Self::new_d(T::zero_d(c), ctx)
     }
@@ -185,9 +185,9 @@ impl<
         + CenteredMulDyn<C>
         + OneDyn<C>
         + EuclidDyn<C>,
-> ClosedMulDyn<(ModularContext<T, C>, &C)> for ModularDyn<T>
+> ClosedMulDyn<(ModularCtx<T, C>, &C)> for ModularDyn<T>
 {
-    fn mul_d(&self, rhs: &Self, ctx: &(ModularContext<T, C>, &C)) -> Self {
+    fn mul_d(&self, rhs: &Self, ctx: &(ModularCtx<T, C>, &C)) -> Self {
         let m = &ctx.0.modulo;
         let c = ctx.1;
         Self::new_d(
@@ -226,7 +226,7 @@ fn mul_test() {
         if m.is_zero_d(&()) {
             continue;
         }
-        let c = ModularContext::new(m.clone(), &());
+        let c = ModularCtx::new(m.clone(), &());
         let ctx = (c, &());
         let modular_dist = StandardDyn::new(&ctx);
         let a: ModularDyn<Z2_8> = rng.sample(&modular_dist);
@@ -241,8 +241,8 @@ fn mul_test() {
     }
 }
 
-impl<C, T: CyclicOrdZeroDyn<C> + OneDyn<C>> OneDyn<(ModularContext<T, C>, &C)> for ModularDyn<T> {
-    fn one_d(ctx: &(ModularContext<T, C>, &C)) -> Self {
+impl<C, T: CyclicOrdZeroDyn<C> + OneDyn<C>> OneDyn<(ModularCtx<T, C>, &C)> for ModularDyn<T> {
+    fn one_d(ctx: &(ModularCtx<T, C>, &C)) -> Self {
         let c = ctx.1;
         Self::new_d(T::one_d(c), ctx)
     }
@@ -256,7 +256,7 @@ where
 }
 
 impl<C, T: CyclicOrdZeroDyn<C> + ClosedAddDyn<C> + ClosedMulDyn<C> + OneDyn<C> + EuclidDyn<C>>
-    Distribution<ModularDyn<T>> for StandardDyn<'_, (ModularContext<T, C>, &C)>
+    Distribution<ModularDyn<T>> for StandardDyn<'_, (ModularCtx<T, C>, &C)>
 where
     for<'a> StandardDyn<'a, C>: Distribution<T>,
 {

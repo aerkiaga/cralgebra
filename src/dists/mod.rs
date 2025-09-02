@@ -1,4 +1,4 @@
-//! Other definitions.
+//! Random distributions.
 
 mod standard_dyn;
 pub use standard_dyn::*;

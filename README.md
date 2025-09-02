@@ -2,6 +2,8 @@
 A fast crypto algebra library.
 
 ## Status
+The current version is to be considered _unstable_, and breaking changes are possible.
+New features and fixes will be added in small incremental releases.
 
 - ✅: complete
 - ⚡: partial
@@ -17,6 +19,7 @@ A fast crypto algebra library.
 | Discrete Gaussian sampling | ⚡ | ✅ |
 
 ## Using the API
+See the [documentation](https://docs.rs/cralgebra/latest).
 
 ## Performance
 Run this to measure latencies for different operations:

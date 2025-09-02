@@ -19,3 +19,5 @@ impl<const N: usize, C, T: ClosedAddDyn<C>> ClosedAddDyn<C> for Cyclotomic<N, T>
         }
     }
 }
+
+impl<const N: usize, T: ClosedAdd> ClosedAdd for Cyclotomic<N, T> {}

@@ -53,4 +53,4 @@ Further tips:
 - Use `MontgomeryDyn` instead of `ModularDyn` if doing multiple operations in series, containing multiplications.
 
 ## Alternative projects
-- [feanor-math](https:://github.com/FeanorTheElf/feanor-math): more featured, with a different approach to API organization.
+- [feanor-math](https://github.com/FeanorTheElf/feanor-math): more featured, with a different approach to API organization.

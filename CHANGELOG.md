@@ -8,6 +8,10 @@ See also [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 - This `CHANGELOG.md` file.
 
+### Fixed
+
+- Alternative project link in `README.md`.
+
 ### Removed
 
 - Unused `static-toml` dependency.

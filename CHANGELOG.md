@@ -7,6 +7,7 @@ See also [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 ### Added
 
 - This `CHANGELOG.md` file.
+- "Status" section in `README.md`.
 
 ### Fixed
 

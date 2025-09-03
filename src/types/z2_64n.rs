@@ -143,6 +143,7 @@ impl<const N: usize> ClosedMulDyn<()> for Z2_64N<N> {
             chunks: std::array::from_fn(|n| {
                 let mut r: u64 = carry0;
                 carry0 = carry1;
+                carry1 = 0;
                 for m in 0..=n {
                     let (rl, rh) = self.chunks[m].widening_mul(rhs.chunks[n - m]);
                     let mut c = false;

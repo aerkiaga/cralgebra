@@ -18,6 +18,9 @@ New features and fixes will be added in small incremental releases.
 | Uniform sampling | ⚡ | ✅ |
 | Discrete Gaussian sampling | ⚡ | ✅ |
 
+"Complete" optimization here refers to using optimal algorithms.
+SIMD and/or inline assembly may also be considered in the future.
+
 ## Using the API
 See the [documentation](https://docs.rs/cralgebra/latest).
 

@@ -12,6 +12,32 @@ pub struct Z2_64N<const N: usize> {
     chunks: [u64; N],
 }
 
+impl<const N: usize> CyclicOrdDyn<()> for Z2_64N<N> {
+    fn cyclic_lt_d(&self, low: &Self, high: &Self, _ctx: &()) -> bool {
+        if low.cyclic_lt0_d(&high, &()) {
+            low.cyclic_lt0_d(&self, &()) && self.cyclic_lt0_d(&high, &())
+        } else {
+            low.cyclic_lt0_d(&self, &()) || self.cyclic_lt0_d(&high, &())
+        }
+    }
+}
+
+impl<const N: usize> CyclicOrdZeroDyn<()> for Z2_64N<N> {
+    fn cyclic_lt0_d(&self, high: &Self, _ctx: &()) -> bool {
+        for n in (0..N).rev() {
+            if self.chunks[n] < high.chunks[n] {
+                return true;
+            }
+            if self.chunks[n] > high.chunks[n] {
+                return false;
+            }
+        }
+        return false;
+    }
+}
+
+impl<const N: usize> LessThanDyn<()> for Z2_64N<N> {}
+
 impl<const N: usize> ClosedAddDyn<()> for Z2_64N<N> {
     fn add_d(&self, rhs: &Self, _ctx: &()) -> Self {
         let mut carry = false;
@@ -60,6 +86,46 @@ fn add_test() {
     }
 }
 
+impl<const N: usize> ClosedSubDyn<()> for Z2_64N<N> {
+    fn sub_d(&self, rhs: &Self, _ctx: &()) -> Self {
+        let mut borrow = false;
+        Self {
+            chunks: std::array::from_fn(|n| {
+                let r = self.chunks[n].borrowing_sub(rhs.chunks[n], borrow);
+                borrow = r.1;
+                r.0
+            }),
+        }
+    }
+
+    fn sub_assign_d(&mut self, rhs: &Self, _ctx: &()) -> () {
+        let mut borrow = false;
+        for n in 0..N {
+            (self.chunks[n], borrow) = self.chunks[n].borrowing_sub(rhs.chunks[n], borrow);
+        }
+    }
+}
+
+#[test]
+fn sub_test() {
+    use rand::rngs::mock::StepRng;
+    let mut rng = StepRng::new(0, 0x54825a7f54825a7f);
+    let base_dist = StandardDyn::new(&());
+    for _ in 0..100 {
+        let a: Z2_64N<80> = rng.sample(&base_dist);
+        let mut one: Z2_64N<80> = Z2_64N {
+            chunks: std::array::from_fn(|_| 0),
+        };
+        one.chunks[0] = 1;
+        let b = a.add(&one);
+        let r = a.sub_d(&b, &());
+        let z: Z2_64N<80> = Z2_64N {
+            chunks: std::array::from_fn(|_| 0xffffffffffffffff),
+        };
+        assert!(r == z);
+    }
+}
+
 impl<const N: usize> ZeroDyn<()> for Z2_64N<N> {
     fn zero_d(_ctx: &()) -> Self {
         Self {
@@ -71,16 +137,18 @@ impl<const N: usize> ZeroDyn<()> for Z2_64N<N> {
 impl<const N: usize> ClosedMulDyn<()> for Z2_64N<N> {
     fn mul_d(&self, rhs: &Self, _ctx: &()) -> Self {
         // TODO: optimize (Karatsuba, etc.)
-        let mut carry: u128 = 0;
+        let mut carry0: u64 = 0;
+        let mut carry1: u64 = 0;
         Self {
             chunks: std::array::from_fn(|n| {
-                let mut r: u64 = (carry & 0xffffffffffffffff) as u64;
-                carry >>= 64;
+                let mut r: u64 = carry0;
+                carry0 = carry1;
                 for m in 0..=n {
                     let (rl, rh) = self.chunks[m].widening_mul(rhs.chunks[n - m]);
                     let mut c = false;
                     (r, c) = r.carrying_add(rl, c);
-                    (carry, _) = carry.carrying_add(rh as u128, c);
+                    (carry0, c) = carry0.carrying_add(rh, c);
+                    (carry1, _) = carry1.carrying_add(0, c);
                 }
                 r
             }),

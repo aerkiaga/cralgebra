@@ -1,17 +1,30 @@
 # Changelog
+
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 See also [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## Added
+
+- Implementations of cyclic and linear order for `Z2_64N`.
+- Implementation of closed subtraction for `Z2_64N`.
+
+## Changed
+
+- Optimized `Z2_64N` multiplication a bit (10% performance gain).
+
 ## [0.2.0] - 2025-09-02
+
 This release introduces breaking changes.
 
 ### Added
+
 - Implementation of the non-dynamic `ClosedAdd` trait for all types supporting it.
 - Documentation for the top-level crate.
 
 ### Changed
+
 - **Breaking:** renamed every `*Context` to `*Ctx` for brevity.
 - **Breaking:** renamed the `misc` module to `dists`.
 

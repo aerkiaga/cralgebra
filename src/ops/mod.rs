@@ -28,5 +28,7 @@ pub use inv_dyn::*;
 
 mod euclid_dyn;
 pub use euclid_dyn::*;
+mod outer_euclid_dyn;
+pub use outer_euclid_dyn::*;
 mod order_dyn;
 pub use order_dyn::*;

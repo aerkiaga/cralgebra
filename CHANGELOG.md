@@ -5,14 +5,21 @@ See also [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [0.2.1] - 2025-09-08
+
 ## Added
 
+- Generalized Euclidean division trait.
 - Implementations of cyclic and linear order for `Z2_64N`.
 - Implementation of closed subtraction for `Z2_64N`.
 
 ## Changed
 
 - Optimized `Z2_64N` multiplication a bit (10% performance gain).
+
+## Fixed
+
+- Documentation for `EuclidDyn`.
 
 ## [0.2.0] - 2025-09-02
 

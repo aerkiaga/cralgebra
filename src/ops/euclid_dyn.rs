@@ -3,7 +3,7 @@ use crate::*;
 /// Euclidean division with optional runtime context.
 ///
 /// Takes two elements `self` and `rhs` of the same type,
-/// and returns values satisfying `self = q * rhs + r",
+/// and returns values satisfying `self = q * rhs + r`,
 /// where, given some ordering, `r < rhs`.
 pub trait EuclidDyn<C>: Sized + ClosedMulDyn<C> + ClosedAddDyn<C> {
     /// Computes `q` so that `self = q * rhs + r`.

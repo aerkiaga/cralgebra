@@ -7,6 +7,7 @@ use rand::{
 /// The `Z2^64N` integer ring, for some `N`.
 ///
 /// This corresponds to a fixed-width bigint using wrapping arithmetic.
+#[repr(transparent)]
 #[derive(Clone, Eq, PartialEq)]
 pub struct Z2_64N<const N: usize> {
     chunks: [u64; N],
